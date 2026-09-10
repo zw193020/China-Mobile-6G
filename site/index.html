@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="theme-color" content="#185FA5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="资费监控">
+<meta name="description" content="中国移动资费公示监控：全网与湖南资费数据一览、变更历史、新增下架提醒">
+<title>中国移动资费监控 · 数据一览</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/svg+xml" href="./logo.svg">
+<link rel="apple-touch-icon" href="./logo.svg">
+<link rel="stylesheet" href="./style.css?v=20260910a">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-logo"><img src="logo.svg" alt="中国移动资费监控"></span>
+      <div class="brand-text">
+        <div class="brand-name">中国移动资费监控</div>
+        <div class="brand-sub">全网 · 湖南资费数据一览</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="update-time" id="updateTime" title="数据快照更新时间">加载中…</div>
+      <button class="glass-btn" id="refreshBtn" title="检查是否有更新的数据">刷新</button>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-view="overview">数据总览</button>
+    <button class="tab" data-view="quanguo">全网资费</button>
+    <button class="tab" data-view="prov">湖南资费</button>
+    <button class="tab" data-view="history">变化历史</button>
+    <button class="tab" data-view="about">关于</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 数据总览 -->
+  <section id="view-overview" class="view active">
+    <div class="stat-grid" id="statGrid">
+      <div class="stat-card"><div class="stat-num" id="stTotal">-</div><div class="stat-label">全网资费</div></div>
+      <div class="stat-card"><div class="stat-num" id="stAllProv">-</div><div class="stat-label" id="stAllProvLabel">湖南资费</div></div>
+      <div class="stat-card accent"><div class="stat-num" id="stQuanguo">-</div><div class="stat-label" id="stQuanguoLabel">湖南个人资费</div></div>
+      <div class="stat-card accent2"><div class="stat-num" id="stGq">-</div><div class="stat-label" id="stGqLabel">湖南政企资费</div></div>
+    </div>
+    <div class="panel">
+      <h2 class="panel-title">六大类分布
+        <select id="oProv" class="sel prov-sel" title="切换板块查看分类统计"></select>
+        <span class="panel-sub" id="distDesc">个人 · 政企</span>
+      </h2>
+      <div class="stat-card"><div class="stat-num" id="opTotal">-</div><div class="stat-label" id="opLabel">资费总数</div></div>
+      <div class="bars" id="distBars"></div>
+    </div>
+  </section>
+
+  <!-- 全国资费 -->
+  <section id="view-quanguo" class="view">
+    <div class="toolbar">
+      <div class="sort-bar" id="qSortBar">
+        <span class="sort-tit">排序</span>
+        <button type="button" class="sort-btn" data-sort="time">最新上架</button>
+        <button type="button" class="sort-btn" data-sort="price">按价格</button>
+        <button type="button" class="sort-btn s-dir" data-sort="dir">降序 ↓</button>
+      </div>
+      <input type="search" id="qSearch" class="search-box" placeholder="搜索名称/资费标准/说明关键词…">
+      <select id="qOwn" class="sel"><option value="">全部归属</option><option>个人资费</option><option>政企资费</option></select>
+      <select id="qType" class="sel"><option value="">全部类型</option><option>套餐</option><option>加装包</option><option>营销活动</option></select>
+      <button class="btn" id="qReload">重新加载</button>
+      <span class="count-hint" id="qCount"></span>
+    </div>
+    <div class="list" id="qList"><div class="loading">加载全网资费数据…</div></div>
+    <div class="pager" id="qPager"></div>
+  </section>
+
+  <!-- 省份资费（默认湖南） -->
+  <section id="view-prov" class="view">
+    <div class="toolbar">
+      <div class="sort-bar" id="pSortBar">
+        <span class="sort-tit">排序</span>
+        <button type="button" class="sort-btn" data-sort="time">最新上架</button>
+        <button type="button" class="sort-btn" data-sort="price">按价格</button>
+        <button type="button" class="sort-btn s-dir" data-sort="dir">降序 ↓</button>
+      </div>
+      <label class="prov-label" for="pProv">板块：</label>
+      <select id="pProv" class="sel prov-sel" title="切换监控板块"></select>
+      <input type="search" id="pSearch" class="search-box" placeholder="搜索名称/资费标准/说明关键词…">
+      <select id="pType" class="sel"><option value="">全部类型</option><option>套餐</option><option>加装包</option><option>营销活动</option></select>
+      <button class="btn" id="pReload">重新加载</button>
+      <span class="count-hint" id="pCount"></span>
+    </div>
+    <div class="list" id="pList"><div class="loading">加载资费数据…</div></div>
+    <div class="pager" id="pPager"></div>
+  </section>
+
+  <!-- 变化历史 -->
+  <section id="view-history" class="view">
+    <div class="panel">
+      <h2 class="panel-title">资费变更时间线</h2>
+      <div class="toolbar htl">
+        <label class="prov-label" for="hProvFilter">板块：</label>
+        <select id="hProvFilter" class="sel prov-sel" title="按板块筛选变化历史"></select>
+      </div>
+      <div id="historyBox"><div class="loading">加载历史记录…</div></div>
+    </div>
+  </section>
+
+  <!-- 关于 -->
+  <section id="view-about" class="view">
+    <div class="panel">
+      <h2 class="panel-title">关于本页</h2>
+      <div class="about-text">
+        <p>本页面展示中国移动「全网资费」与「湖南资费」的公开资费公示数据，由自动监控程序定时抓取官网资费专区、比对差异后发布，国内外均可直接访问。</p>
+        <ul>
+          <li><b>数据来源：</b>中国移动官网公开资费公示专区</li>
+          <li><b>覆盖范围：</b>个人 / 政企 × 套餐 / 加装包 / 营销活动，共六大类</li>
+          <li><b>更新方式：</b>云端定时任务每 12 小时抓取一次并比对，有变化即刷新本页并邮件提醒</li>
+          <li><b>手机访问：</b>用手机浏览器打开本页，可「添加到主屏幕」像 App 一样使用</li>
+          <li><b>数据口径：</b>以官网「适用地区」「适用范围」字段为准，仅供参考</li>
+          <li><b>免责声明：</b>展示内容可能存在延迟或误差，办理业务请以营业厅 / 10086 官方信息为准</li>
+        </ul>
+      </div>
+      <div class="set-box">
+        <div class="set-title">实时数据源（可选）</div>
+        <div class="set-row">
+          <input id="repoInput" class="search-box" placeholder="GitHub 仓库，如 yourname/cmcc-tariff-monitor">
+          <button class="btn" id="repoSave">保存并刷新</button>
+        </div>
+        <div class="set-hint" id="repoHint">填写后本页会优先读取该仓库上的最新数据；留空则使用站点自带快照。</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">中国移动资费监控面板 · 数据仅供个人学习参考</footer>
+
+<!-- 详情弹窗 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal-card">
+    <div class="modal-head"><span id="modalTitle">详情</span><button class="modal-close" id="modalClose" title="关闭">×</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot"><button class="btn" id="modalOk">知道了</button></div>
+  </div>
+</div>
+
+<script src="./config.js?v=20260910b"></script>
+<script src="./app.js?v=20260910a"></script>
+</body>
+</html>

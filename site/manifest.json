@@ -1,0 +1,15 @@
+{
+  "name": "中国移动资费监控",
+  "short_name": "资费监控",
+  "description": "中国移动全网与湖南资费公示数据一览、变更历史与新增下架提醒",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f7fa",
+  "theme_color": "#185FA5",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "./logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

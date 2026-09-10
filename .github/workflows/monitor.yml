@@ -1,0 +1,54 @@
+name: 资费监控
+
+on:
+  # 每 12 小时运行一次（GitHub Actions 用 UTC，即北京时间 8:00 / 20:00）
+  schedule:
+    - cron: "0 0,12 * * *"
+  # 也支持在仓库 Actions 页面手动点「Run workflow」立即跑一次
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: pip install pycryptodome
+
+      - name: 抓取资费并发送邮件
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_TO: ${{ secrets.SMTP_TO }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+          TRACK_PROVINCES: ${{ vars.TRACK_PROVINCES }}
+        run: python main.py --once
+
+      - name: 生成站点数据
+        run: python scripts/build_site.py
+
+      - name: 提交快照与站点数据
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add snapshots/ site/data/
+          if git diff --cached --quiet; then
+            echo "本次无数据变化，跳过提交。"
+          else
+            git commit -m "update tariff snapshots $(date +%F_%T)"
+            git pull --rebase --autostash origin main || git pull origin main --no-rebase || true
+            git push
+          fi
