@@ -537,5 +537,27 @@
         ]
       }
     }
+  },
+  {
+    "ts": "2026-09-12 08:07:49",
+    "quanguo": {
+      "added": 0,
+      "removed": 2,
+      "modified": 0,
+      "added_names": [],
+      "removed_names": [
+        "移动云盘实时语音转写权益（单次订购）",
+        "移动云盘实时语音转写权益"
+      ],
+      "modified_names": []
+    },
+    "hunan": {
+      "added": 0,
+      "removed": 0,
+      "modified": 0,
+      "added_names": [],
+      "removed_names": [],
+      "modified_names": []
+    }
   }
 ]
