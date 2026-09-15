@@ -2,8 +2,10 @@ name: 资费监控
 
 on:
   # 每 12 小时运行一次（GitHub Actions 用 UTC，即北京时间 8:00 / 20:00）
-  schedule:
-    - cron: "0 0,12 * * *"
+  # 定时任务已停用（四家版 tariff-monitor-4g 已接管，避免重复推送）
+  # 恢复方法：删掉下面两行行首的 # 和空格
+  # schedule:
+  # - cron: "0 0,12 * * *"
   # 也支持在仓库 Actions 页面手动点「Run workflow」立即跑一次
   workflow_dispatch:
 
